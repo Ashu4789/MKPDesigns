@@ -3,6 +3,14 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+const dns = require('node:dns');
+
+// Custom DNS to fix Node 24/Windows resolution issues
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']); // Google & Cloudflare DNS
+} catch (error) {
+  console.log('Could not set custom DNS servers:', error.message);
+}
 
 // Load env vars
 dotenv.config();

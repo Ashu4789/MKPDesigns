@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const User = require('./models/user');
-const connectDB = require('./config/db');
+const User = require('../models/user');
+const connectDB = require('../config/db');
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
 connectDB();
 
 const createAdmin = async () => {

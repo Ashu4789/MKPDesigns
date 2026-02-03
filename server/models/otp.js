@@ -25,4 +25,4 @@ const otpSchema = new mongoose.Schema({
 // Index for faster queries
 otpSchema.index({ email: 1, createdAt: -1 });
 
-module.exports = mongoose.model('OTP', otpSchema);
+module.exports = mongoose.models.OTP || mongoose.model('OTP', otpSchema);

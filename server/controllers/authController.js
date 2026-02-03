@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const OTP = require('../models/otp');
 
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d'
+    expiresIn: process.env.JWT_EXPIRE || '30d'
   });
 };
 
@@ -31,10 +32,10 @@ const signup = async (req, res) => {
     }
 
     // Verify that OTP was verified for this email
-    const OTP = require('../models/OTP');
-    const verifiedOTP = await OTP.findOne({ 
+
+    const verifiedOTP = await OTP.findOne({
       email: email.toLowerCase(),
-      verified: true 
+      verified: true
     }).sort({ createdAt: -1 });
 
     if (!verifiedOTP) {
@@ -43,7 +44,8 @@ const signup = async (req, res) => {
 
     // Check if OTP verification is still valid (within 30 minutes)
     const otpAge = (new Date() - verifiedOTP.createdAt) / 1000;
-    if (otpAge > 1800) { // 30 minutes
+    const OTP_EXPIRY_SECONDS = 1800; // 30 minutes
+    if (otpAge > OTP_EXPIRY_SECONDS) {
       await OTP.deleteOne({ _id: verifiedOTP._id });
       return res.status(400).json({ message: 'OTP verification expired. Please start again.' });
     }
