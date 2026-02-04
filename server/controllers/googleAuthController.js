@@ -27,7 +27,7 @@ const googleAuth = async (req, res) => {
     if (user) {
       // User exists - login
       console.log('Existing user found:', user._id);
-      
+
       if (!user.googleId) {
         // Link Google account to existing user
         user.googleId = googleId;
@@ -52,7 +52,7 @@ const googleAuth = async (req, res) => {
     } else {
       // New Google user - create minimal profile
       console.log('Creating new Google user');
-      
+
       user = await User.create({
         name,
         email: email.toLowerCase(),
@@ -82,9 +82,9 @@ const googleAuth = async (req, res) => {
     }
   } catch (error) {
     console.error('Google auth error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Google authentication failed',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -94,7 +94,7 @@ const googleAuth = async (req, res) => {
 // @access  Private
 const completeGoogleProfile = async (req, res) => {
   try {
-    const { phone, organization } = req.body;
+    const { phone, organization, password } = req.body;
 
     if (!phone || !organization) {
       return res.status(400).json({ message: 'Phone and organization are required' });
@@ -108,6 +108,12 @@ const completeGoogleProfile = async (req, res) => {
 
     user.phone = phone;
     user.organization = organization;
+
+    // If password is provided (optional for Google users but allowed)
+    if (password) {
+      user.password = password;
+    }
+
     await user.save();
 
     res.json({

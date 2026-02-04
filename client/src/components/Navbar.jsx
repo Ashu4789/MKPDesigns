@@ -13,7 +13,20 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
 
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center space-x-3 group">
+          
+          { user ? (<Link to="/dashboard" className="flex items-center space-x-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/40 rounded-lg blur-xl opacity-40 group-hover:opacity-70 transition-opacity" />
+              <div className="relative bg-primary p-2 rounded-lg flex items-center justify-center">
+                <User className="h-6 w-6 text-primary-foreground" />
+              </div>
+            </div>
+
+            <span className="font-bold text-xl text-foreground group-hover:text-primary transition-all tracking-tight">
+              MKP Designs
+            </span>
+          </Link> ) : (
+            <Link to="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/40 rounded-lg blur-xl opacity-40 group-hover:opacity-70 transition-opacity" />
               <div className="relative bg-primary p-2 rounded-lg flex items-center justify-center">
@@ -25,21 +38,10 @@ const Navbar = () => {
               MKP Designs
             </span>
           </Link>
+          )}
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            {user && (
-              <Link
-                to="/designs"
-                className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
-              >
-                Designs
-              </Link>
-            )}
-
-
-
-
             {(!user || user.role !== 'admin') && (
               <Link
                 to="/contact"

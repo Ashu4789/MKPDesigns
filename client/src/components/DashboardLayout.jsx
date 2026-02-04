@@ -23,6 +23,7 @@ const DashboardLayout = ({ children }) => {
   const menuItems = [
     { name: 'Overview', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
     { name: 'Projects', icon: <Package className="h-5 w-5" />, path: '/projects' },
+    { name: 'Designs' , icon: <FileText className="h-5 w-5" />, path: '/designs' },
   ];
 
   if (user && user.role === 'admin') {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, Building, AlertCircle } from 'lucide-react';
+import { Phone, Building, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { completeGoogleProfile } from '../services/api';
 
 const CompleteProfile = () => {
@@ -8,10 +8,14 @@ const CompleteProfile = () => {
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     phone: '',
-    organization: ''
+    organization: '',
+    password: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const googleUser = sessionStorage.getItem('googleUser');
@@ -52,8 +56,20 @@ const CompleteProfile = () => {
     setLoading(true);
     setError('');
 
-    if (!formData.phone || !formData.organization) {
+    if (!formData.phone || !formData.organization || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all required fields');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
@@ -137,6 +153,71 @@ const CompleteProfile = () => {
                 className="w-full pl-10 pr-4 py-3 bg-background border border-input text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-muted-foreground/50 transition-all"
                 placeholder="Your Company"
               />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className="group">
+            <label className="block text-sm font-medium text-muted-foreground mb-2 group-focus-within:text-primary transition-colors">
+              Set Password *
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                minLength="6"
+                className="w-full pl-10 pr-12 py-3 bg-background border border-input text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-muted-foreground/50 transition-all"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Set a password to login with email/password later
+            </p>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="group">
+            <label className="block text-sm font-medium text-muted-foreground mb-2 group-focus-within:text-primary transition-colors">
+              Confirm Password *
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                minLength="6"
+                className="w-full pl-10 pr-12 py-3 bg-background border border-input text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-muted-foreground/50 transition-all"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
             </div>
           </div>
 
