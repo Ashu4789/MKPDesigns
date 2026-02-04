@@ -31,6 +31,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/designs', require('./routes/designs'));
+app.use('/api/projects', require('./routes/projects'));
 
 
 // Basic route

@@ -7,11 +7,14 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CompleteProfile from './pages/CompleteProfile';
-import Dashboard from './pages/Dashboard';
+import Overview from './pages/Overview';
 import Settings from './pages/Settings';
 import ContactUs from './pages/ContactUs';
 import Designs from './pages/Designs';
 import DesignUpload from './pages/DesignUpload';
+import Projects from './pages/Projects';
+import ProjectDetails from './pages/ProjectDetails';
+import AdminProjectUpload from './pages/AdminProjectUpload';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -38,6 +41,10 @@ function App() {
                   }
                 />
 
+                {/* Projects Routes */}
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:id" element={<ProjectDetails />} />
+
                 {/* Protected Dashboard Routes */}
                 <Route path="/designs" element={<Designs />} />
 
@@ -46,7 +53,7 @@ function App() {
                   path="/dashboard"
                   element={
                     <ProtectedRoute>
-                      <Dashboard />
+                      <Overview />
                     </ProtectedRoute>
                   }
                 />
@@ -63,6 +70,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <DesignUpload />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/upload-project"
+                  element={
+                    <ProtectedRoute>
+                      <AdminProjectUpload />
                     </ProtectedRoute>
                   }
                 />

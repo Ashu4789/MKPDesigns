@@ -2,9 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
-import { TrendingUp, Loader } from 'lucide-react';
+import ProjectsOverview from '../components/ProjectsOverview';
+import { Loader } from 'lucide-react';
 
-const Dashboard = () => {
+const Overview = () => {
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
   const [recentUpdates, setRecentUpdates] = useState([]);
@@ -78,8 +79,10 @@ const Dashboard = () => {
         </p>
       </div>
 
-      
-      
+
+
+
+      <ProjectsOverview />
 
       <div className="mt-6 bg-card border border-border rounded-xl p-6">
         <h3 className="text-sm font-semibold text-foreground mb-2">Data Sources</h3>
@@ -91,4 +94,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Overview;

@@ -22,10 +22,12 @@ const DashboardLayout = ({ children }) => {
 
   const menuItems = [
     { name: 'Overview', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
+    { name: 'Projects', icon: <Package className="h-5 w-5" />, path: '/projects' },
   ];
 
   if (user && user.role === 'admin') {
     menuItems.push({ name: 'Upload Design', icon: <Upload className="h-5 w-5" />, path: '/design-upload' });
+    menuItems.push({ name: 'Upload Project', icon: <Package className="h-5 w-5" />, path: '/admin/upload-project' });
   }
 
   menuItems.push({ name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/dashboard/settings' });
@@ -101,7 +103,12 @@ const DashboardLayout = ({ children }) => {
                 Need Help?
               </p>
               <p className="text-xs text-muted-foreground">
-                Check documentation for guides and tutorials
+                {(!user || user.role !== 'admin') && (
+                  <Link to='/contact' className='text-primary hover:underline'>Contact Us</Link>
+                )}
+                {user && user.role === 'admin' && (
+                  <span className='text-muted-foreground'>Admin Access</span>
+                )}
               </p>
             </div>
           </div>

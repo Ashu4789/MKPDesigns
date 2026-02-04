@@ -1,7 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, CheckCircle } from 'lucide-react';
 
 const ContactUs = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -88,8 +98,9 @@ const ContactUs = () => {
     }
   ];
 
-  
+
   return (
+
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero */}
       <div className="bg-card border-b border-border py-16">

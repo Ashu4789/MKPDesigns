@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link to="/dashboard" className="flex items-center space-x-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/40 rounded-lg blur-xl opacity-40 group-hover:opacity-70 transition-opacity" />
               <div className="relative bg-primary p-2 rounded-lg flex items-center justify-center">
@@ -28,29 +28,29 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
+            {user && (
+              <Link
+                to="/designs"
+                className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
+              >
+                Designs
+              </Link>
+            )}
 
-            <Link
-              to="/designs"
-              className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
-            >
-              Designs
-            </Link>
 
-            <Link
-              to="/contact"
-              className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
-            >
-              Contact
-            </Link>
+
+
+            {(!user || user.role !== 'admin') && (
+              <Link
+                to="/contact"
+                className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
+              >
+                Contact
+              </Link>
+            )}
 
             {user ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
-                >
-                  Dashboard
-                </Link>
 
                 {/* User Profile */}
                 <div className="flex items-center space-x-3 px-4 py-2 bg-muted/30 backdrop-blur-sm border border-border rounded-full">
@@ -112,21 +112,27 @@ const Navbar = () => {
         <div className="md:hidden bg-card/95 backdrop-blur-xl border-t border-border animate-fade-in shadow-xl">
           <div className="px-4 py-6 space-y-4">
 
-            <Link
-              to="/designs"
-              className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Designs
-            </Link>
+            {user && (
+              <Link
+                to="/designs"
+                className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Designs
+              </Link>
+            )}
 
-            <Link
-              to="/contact"
-              className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Contact
-            </Link>
+
+
+            {(!user || user.role !== 'admin') && (
+              <Link
+                to="/contact"
+                className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contact
+              </Link>
+            )}
 
             {user ? (
               <>

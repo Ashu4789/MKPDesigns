@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { uploadDesign } from '../services/api';
 import Navbar from '../components/Navbar';
+import DashboardLayout from '../components/DashboardLayout';
 import { Upload, FileText, Image, IndianRupee, Tag, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 const DesignUpload = () => {
@@ -103,6 +104,8 @@ const DesignUpload = () => {
     };
 
     return (
+        <>
+        <DashboardLayout>
         <div className="min-h-screen bg-background">
             <Navbar />
 
@@ -276,6 +279,8 @@ const DesignUpload = () => {
                 </div>
             </div>
         </div>
+        </DashboardLayout>
+        </> 
     );
 };
 
