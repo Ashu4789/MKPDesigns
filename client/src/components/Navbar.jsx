@@ -30,6 +30,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6">
 
             <Link
+              to="/designs"
+              className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
+            >
+              Designs
+            </Link>
+
+            <Link
               to="/contact"
               className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-muted/50"
             >
@@ -106,6 +113,14 @@ const Navbar = () => {
           <div className="px-4 py-6 space-y-4">
 
             <Link
+              to="/designs"
+              className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Designs
+            </Link>
+
+            <Link
               to="/contact"
               className="block text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-muted/50"
               onClick={() => setMobileMenuOpen(false)}
@@ -173,7 +188,7 @@ const Navbar = () => {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }

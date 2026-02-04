@@ -10,6 +10,8 @@ import CompleteProfile from './pages/CompleteProfile';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import ContactUs from './pages/ContactUs';
+import Designs from './pages/Designs';
+import DesignUpload from './pages/DesignUpload';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -37,6 +39,9 @@ function App() {
                 />
 
                 {/* Protected Dashboard Routes */}
+                <Route path="/designs" element={<Designs />} />
+
+                {/* Protected Dashboard Routes */}
                 <Route
                   path="/dashboard"
                   element={
@@ -50,6 +55,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/design-upload"
+                  element={
+                    <ProtectedRoute>
+                      <DesignUpload />
                     </ProtectedRoute>
                   }
                 />

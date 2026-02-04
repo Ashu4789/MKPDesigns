@@ -64,4 +64,21 @@ export const downloadUploadedFile = (reportId) => {
   });
 };
 
+// Designs API
+export const uploadDesign = (formData) => {
+  return api.post('/designs', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const getDesigns = (params) => {
+  return api.get('/designs', { params });
+};
+
+export const getDesignById = (id) => {
+  return api.get(`/designs/${id}`);
+};
+
 export default api;

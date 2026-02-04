@@ -32,7 +32,7 @@ const createAdmin = async () => {
                 email: adminEmail,
                 password: 'National@2025',
                 phone: '9348825087',
-                organization: 'Ministry of Statistics',
+                organization: 'MKP Designs',
                 role: 'admin',
                 emailVerified: true
             });

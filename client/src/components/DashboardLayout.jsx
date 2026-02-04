@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -10,17 +11,24 @@ import {
   X,
   Package,
   MapPin,
-  Users
+  Users,
+  Upload
 } from 'lucide-react';
 
 const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useContext(AuthContext);
   const location = useLocation();
 
   const menuItems = [
     { name: 'Overview', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
-    { name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/dashboard/settings' }
   ];
+
+  if (user && user.role === 'admin') {
+    menuItems.push({ name: 'Upload Design', icon: <Upload className="h-5 w-5" />, path: '/design-upload' });
+  }
+
+  menuItems.push({ name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/dashboard/settings' });
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
