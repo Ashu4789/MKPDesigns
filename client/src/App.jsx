@@ -41,12 +41,12 @@ function App() {
                   }
                 />
 
-                {/* Projects Routes */}
-                <Route path="/projects" element={<Projects />} />
+                {/*  Protected Projects Routes */}
+                <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
                 <Route path="/projects/:id" element={<ProjectDetails />} />
 
                 {/* Protected Dashboard Routes */}
-                <Route path="/designs" element={<Designs />} />
+                <Route path="/designs" element={<ProtectedRoute><Designs /></ProtectedRoute>} />
 
                 {/* Protected Dashboard Routes */}
                 <Route

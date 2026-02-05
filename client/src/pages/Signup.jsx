@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { User, Mail, Lock, AlertCircle, Phone, Building, CheckCircle, Eye, EyeOff } from 'lucide-react';
-import { sendOTP, verifyOTP, resendOTP, signup, googleSignIn } from '../services/api';
+import { sendOTP, verifyOTP, resendOTP, googleSignIn } from '../services/api';
+import { AuthContext } from '../context/AuthContext';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const SignupContent = () => {
   const navigate = useNavigate();
+  const { signup, googleLogin } = useContext(AuthContext);
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Details
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -86,7 +88,7 @@ const SignupContent = () => {
     }
 
     try {
-      const response = await signup({
+      const result = await signup({
         name: formData.name,
         email,
         phone: formData.phone,
@@ -94,10 +96,13 @@ const SignupContent = () => {
         password: formData.password
       });
 
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      // Navigate is handled in context
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
+      setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -147,13 +152,13 @@ const SignupContent = () => {
         picture: decoded.picture
       });
 
-      localStorage.setItem('token', response.data.token);
+      googleLogin(response.data, response.data.token);
 
       if (response.data.isComplete) {
         navigate('/dashboard');
       } else {
         // Need to complete profile
-        navigate('/complete-profile', { state: { user: response.data } });
+        navigate('/complete-profile');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Google sign-in failed');

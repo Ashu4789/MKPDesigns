@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Phone, Building, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { completeGoogleProfile } from '../services/api';
+import { AuthContext } from '../context/AuthContext';
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user, updateUser, loading: authLoading } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     phone: '',
     organization: '',
@@ -18,21 +19,16 @@ const CompleteProfile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    const googleUser = sessionStorage.getItem('googleUser');
-
-    if (googleUser) {
-      const parsedUser = JSON.parse(googleUser);
-      setUser(parsedUser);
-
-      if (parsedUser.phone && parsedUser.organization) {
+    if (!authLoading) {
+      if (!user) {
+        navigate('/signup');
+      } else if (user.phone && user.organization) {
         navigate('/dashboard');
       }
-    } else {
-      navigate('/signup');
     }
-  }, [navigate]);
+  }, [user, navigate, authLoading]);
 
-  if (!user) {
+  if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -76,10 +72,8 @@ const CompleteProfile = () => {
 
     try {
       const response = await completeGoogleProfile(formData);
-
-      sessionStorage.removeItem('googleUser');
-      await new Promise(resolve => setTimeout(resolve, 200));
-      window.location.href = '/dashboard';
+      updateUser(response.data);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to complete profile');
       setLoading(false);

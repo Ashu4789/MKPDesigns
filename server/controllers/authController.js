@@ -128,6 +128,7 @@ const getMe = async (req, res) => {
       phone: user.phone,
       organization: user.organization,
       role: user.role,
+      profilePicture: user.profilePicture,
       preferences: user.preferences
     });
   } catch (error) {

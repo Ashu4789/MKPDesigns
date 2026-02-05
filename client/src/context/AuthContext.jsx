@@ -43,9 +43,9 @@ export const AuthProvider = ({ children }) => {
       navigate('/dashboard');
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Login failed' 
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Login failed'
       };
     }
   };
@@ -66,11 +66,17 @@ export const AuthProvider = ({ children }) => {
       navigate('/dashboard');
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Signup failed' 
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Signup failed'
       };
     }
+  };
+
+  const googleLogin = (userData, token) => {
+    localStorage.setItem('token', token);
+    setUser(userData);
+    return { success: true };
   };
 
   const logout = () => {
@@ -87,7 +93,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, updateUser, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, googleLogin, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
