@@ -31,6 +31,17 @@ This document details every possible user interaction pathway within the MKPDesi
 3.  **Success**: System validates credentials and redirects to **Dashboard**.
 4.  **Failure**: System shows error message (Invalid credentials).
 
+### D. Forgot Password
+**Goal**: Reset a lost password via email verification.
+1.  **Entry**: User clicks "Forgot Password?" on the Login page.
+2.  **Request**: User enters their registered email address.
+3.  **Verification**:
+    -   System sends an email with a 6-digit OTP and a **direct reset link**.
+4.  **Reset**:
+    -   **Option A**: User clicks the link -> Redirected to Reset page with form pre-filled.
+    -   **Option B**: User manually enters email and OTP on the Reset page.
+5.  **Completion**: User enters new password. System updates credentials and redirects to Login.
+
 ---
 
 ## 2. General User Pathways (Dashboard)
@@ -89,6 +100,16 @@ Users with the `role: 'admin'` have exclusive access to management features.
     2.  Set Status (Ongoing/Completed) and Timeline.
     3.  Upload Project Thumbnail and Gallery Images.
     4.  **Submit**: Project is published to the `/projects` list.
+
+### C. Deleting Content
+**Goal**: Remove outdated or incorrect items (Admin Only).
+1.  **Entry**: Navigate to `/projects` or `/designs`.
+2.  **Action**: Click the **Trash Icon** on a specific item card.
+3.  **Confirmation**: A browser prompt asks for final confirmation ("Are you sure...?").
+4.  **Process**:
+    -   System deletes the database record.
+    -   System automatically removes associated images/assets from Cloudinary.
+5.  **Result**: Item is permanently removed from the application.
 
 ---
 

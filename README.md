@@ -24,28 +24,34 @@ Advanced architecture portfolio and project management platform built with the M
 - **Authentication System**
     - Secure Email/Password Signup & Login
     - Google OAuth Integration
+    - **Forgot Password**: Secure email-based password reset flow (OTP & Direct Link).
     - OTP (One-Time Password) Email Verification
     - Profile Completion Flow for Social Logins
 - **Dashboard & Management**
     - **Projects**: Comprehensive project management view with details.
     - **Designs**: Architecture design portfolio with gallery view.
-    - **Admin Tools**: Interfaces for uploading and managing Projects and Designs.
+    - **Admin Tools**:
+        - Upload and manage Projects and Designs.
+        - **Deletion Control**: Admins can safely delete projects and designs (auto-removes assets from Cloudinary).
 - **User Profile**
     - Profile management with organizational details.
     - Customizable preferences.
 - **Modern UI/UX**
     - Responsive design using Tailwind CSS.
+    - **Interactive Elements**: Glassmorphism cards, animated backgrounds, and intuitive navigation.
     - Interactive 3D elements (Three.js/Fiber).
     - Dark/Light mode support.
     - Toast notifications for user feedback.
 
 ## Tech Stack
 
+For a detailed breakdown of libraries and their usage, see [LIBRARY_USAGE.md](./LIBRARY_USAGE.md).
+
 ### Client-Side
 -   **Core**: React 19, Vite
--   **Styling**: Tailwind CSS 4, Lucide React (Icons)
+-   **Styling**: Tailwind CSS 4, Lucide React (Icons), Framer Motion
 -   **State/Routing**: React Router 7, Context API
--   **Visuals**: React Three Fiber (3D), Framer Motion (Animations), React Image Gallery
+-   **Visuals**: React Three Fiber (3D), React Image Gallery
 -   **Forms**: React Hook Form, Yup Validation
 -   **Auth**: React OAuth Google, JWT Decode
 
@@ -54,7 +60,7 @@ Advanced architecture portfolio and project management platform built with the M
 -   **Database**: MongoDB (Mongoose ODM)
 -   **Authentication**: JWT, Passport.js, Bcryptjs
 -   **File Storage**: Cloudinary (Multer storage)
--   **Email**: Nodemailer (OTP/Notifications)
+-   **Email**: Nodemailer (OTP/Notifications/Password Reset)
 -   **Validation**: Joi
 
 ## Data Coverage
@@ -161,6 +167,8 @@ Major endpoints available:
     -   `POST /api/auth/login`: User login
     -   `POST /api/auth/google`: Google OAuth
     -   `POST /api/auth/verify-otp`: Verify email OTP
+    -   `POST /api/auth/forgot-password`: Request password reset (OTP/Link)
+    -   `POST /api/auth/reset-password`: Set new password
 -   **Projects**
     -   `GET /api/projects`: List all projects
     -   `POST /api/projects`: Create project (Admin)
