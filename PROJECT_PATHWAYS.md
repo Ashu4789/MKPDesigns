@@ -38,8 +38,8 @@ This document details every possible user interaction pathway within the MKPDesi
 3.  **Verification**:
     -   System sends an email with a 6-digit OTP and a **direct reset link**.
 4.  **Reset**:
-    -   **Option A**: User clicks the link -> Redirected to Reset page with form pre-filled.
-    -   **Option B**: User manually enters email and OTP on the Reset page.
+    -   **Option A (Link)**: User clicks the link -> System **automatically verifies** the code -> User sees "Set New Password" form.
+    -   **Option B (Manual)**: User enters email and OTP -> Clicks "Verify" -> User sees "Set New Password" form.
 5.  **Completion**: User enters new password. System updates credentials and redirects to Login.
 
 ---

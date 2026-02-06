@@ -30,6 +30,7 @@ export const sendOTP = (email) => api.post('/auth/send-otp', { email });
 export const verifyOTP = (email, otp) => api.post('/auth/verify-otp', { email, otp });
 export const resendOTP = (email) => api.post('/auth/resend-otp', { email });
 export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
+export const verifyResetOTP = (email, otp) => api.post('/auth/verify-reset-otp', { email, otp });
 export const resetPassword = (data) => api.post('/auth/reset-password', data);
 
 // Google Auth APIs

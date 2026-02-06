@@ -172,7 +172,44 @@ const resetPassword = async (req, res) => {
     }
 };
 
+// @desc    Verify Reset OTP (Check validity only)
+// @route   POST /api/auth/verify-reset-otp
+// @access  Public
+const verifyResetOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Verify OTP
+        const otpRecord = await OTP.findOne({
+            email: email.toLowerCase(),
+            otp: otp.toString()
+        }).sort({ createdAt: -1 });
+
+        if (!otpRecord) {
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        const otpAge = (new Date() - otpRecord.createdAt) / 1000;
+        if (otpAge > 300) { // 5 minutes
+            await OTP.deleteOne({ _id: otpRecord._id });
+            return res.status(400).json({ message: 'OTP expired' });
+        }
+
+        // Just return success, don't delete yet (wait for reset)
+        res.json({ message: 'OTP verified successfully' });
+
+    } catch (error) {
+        console.error('Verify Reset OTP error:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 module.exports = {
     forgotPassword,
-    resetPassword
+    resetPassword,
+    verifyResetOTP
 };
