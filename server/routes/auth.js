@@ -8,6 +8,8 @@ const { protect } = require('../middleware/auth');
 // Regular auth routes
 router.post('/signup', signup);
 router.post('/login', login);
+router.post('/forgot-password', require('../controllers/passwordController').forgotPassword);
+router.post('/reset-password', require('../controllers/passwordController').resetPassword);
 router.get('/me', protect, getMe);
 
 // OTP routes
