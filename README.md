@@ -36,7 +36,12 @@ Advanced architecture portfolio and project management platform built with the M
 - **User Profile**
     - Profile management with organizational details.
     - Customizable preferences.
-- **Modern UI/UX**
+-   **Security**
+    -   **Headers**: Implementation of Helmet for secure HTTP headers.
+    -   **Rate Limiting**: Brute-force protection on all routes (max 100 requests/15min per IP).
+    -   **Input Validation**: Strict server-side validation using Joi schemas.
+    -   **Sanitization**: Protection against XSS and HTTP Parameter Pollution.
+-   **Modern UI/UX**
     - Responsive design using Tailwind CSS.
     - **Interactive Elements**: Glassmorphism cards, animated backgrounds, and intuitive navigation.
     - Interactive 3D elements (Three.js/Fiber).
@@ -61,6 +66,7 @@ For a detailed breakdown of libraries and their usage, see [LIBRARY_USAGE.md](./
 -   **Authentication**: JWT, Passport.js, Bcryptjs
 -   **File Storage**: Cloudinary (Multer storage)
 -   **Email**: Nodemailer (OTP/Notifications/Password Reset)
+-   **Security**: Helmet, Express-Rate-Limit, XSS-Clean, HPP
 -   **Validation**: Joi
 
 ## Data Coverage

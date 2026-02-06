@@ -56,6 +56,18 @@ This document provides a detailed overview of the key libraries and technologies
         -   `Project` & `Design`: Store content data.
         -   `OTP`: Stores temporary codes for verification with automatic expiry (TTL).
 
+### Security
+-   **Helmet** (`helmet`): Helps secure Express apps by setting various HTTP headers.
+    -   *Usage*: Applied globally in `server.js` to protect against common web vulnerabilities (XSS, sniffing, clickjacking).
+-   **Express Rate Limit** (`express-rate-limit`): Basic rate-limiting middleware.
+    -   *Usage*: Limits repeated requests to public APIs (e.g., login) to prevent brute-force attacks.
+-   **Joi** (`joi`): Data validation library.
+    -   *Usage*: Used in `server/middleware/validate.js` to enforce strict schemas on all incoming request bodies (email format, password complexity).
+-   **XSS Clean** (`xss-clean`): Sanitizes user input.
+    -   *Usage*: Middleware that cleans `req.body`, `req.query`, and `req.params` from malicious HTML to prevent Cross-Site Scripting.
+-   **HPP** (`hpp`): HTTP Parameter Pollution protection.
+    -   *Usage*: Prevents attacks that exploit HTTP parameter pollution (e.g., sending multiple `name` parameters).
+
 ### Authentication & Security
 -   **JsonWebToken** (`jsonwebtoken`): Standard for securing API requests.
     -   *Usage*: Generates tokens in `server/controllers/authController.js` upon login. Verified in `server/middleware/auth.js` to protect private routes.
