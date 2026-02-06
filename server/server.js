@@ -36,9 +36,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Data Sanitization against XSS
-const xss = require('xss-clean');
-app.use(xss());
+
 
 // Prevent Parameter Pollution
 const hpp = require('hpp');
