@@ -166,6 +166,12 @@ const LoginContent = () => {
               </div>
 
             </div>
+            {/*forget password*/}
+            <div>
+              <Link to="/forgot-password" className="text-sm text-primary hover:text-primary/80">
+                Forgot Password?
+              </Link>
+            </div>
 
             {/* Submit */}
             <button

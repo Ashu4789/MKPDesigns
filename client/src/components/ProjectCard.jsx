@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight, Trash2 } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onDelete }) => {
+    const { user } = useContext(AuthContext);
+
     return (
-        <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full border border-border">
+        <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full border border-border group/card">
             <div className="relative h-48 overflow-hidden">
                 {project.images && project.images.length > 0 ? (
                     <img
@@ -23,7 +26,21 @@ const ProjectCard = ({ project }) => {
             </div>
 
             <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-foreground mb-2 truncate">{project.title}</h3>
+                <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold text-foreground truncate flex-1">{project.title}</h3>
+                    {user?.role === 'admin' && onDelete && (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent link navigation if inside a link (though here it's not)
+                                onDelete();
+                            }}
+                            className="text-destructive hover:bg-destructive/10 p-1.5 rounded-full transition-colors"
+                            title="Delete Project"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+                    )}
+                </div>
 
                 <div className="flex items-center text-muted-foreground text-sm mb-3">
                     <MapPin size={16} className="mr-1" />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ProjectCard from '../components/ProjectCard';
+import { getProjects, deleteProject } from '../services/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { Search, Filter } from 'lucide-react';
 
@@ -13,7 +13,7 @@ const Projects = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/projects');
+                const res = await getProjects();
                 setProjects(res.data);
             } catch (error) {
                 console.error('Error fetching projects:', error);
@@ -24,6 +24,19 @@ const Projects = () => {
 
         fetchProjects();
     }, []);
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+            try {
+                await deleteProject(id);
+                setProjects(projects.filter(project => project._id !== id));
+                alert('Project deleted successfully');
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                alert('Failed to delete project');
+            }
+        }
+    };
 
     const filteredProjects = projects.filter(project => {
         const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,7 +92,11 @@ const Projects = () => {
                                 {filteredProjects.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                         {filteredProjects.map(project => (
-                                            <ProjectCard key={project._id} project={project} />
+                                            <ProjectCard
+                                                key={project._id}
+                                                project={project}
+                                                onDelete={() => handleDelete(project._id)}
+                                            />
                                         ))}
                                     </div>
                                 ) : (

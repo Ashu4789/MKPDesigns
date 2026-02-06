@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { getTopProjects } from '../services/api';
 import ProjectCard from './ProjectCard';
 import { ArrowRight, Building } from 'lucide-react';
 
@@ -11,9 +11,7 @@ const ProjectsOverview = () => {
     useEffect(() => {
         const fetchTopProjects = async () => {
             try {
-                // In a real app, you might have a dedicated endpoint for top projects
-                // For now, let's fetch all and slice, or use the /top endpoint if we made one (we did!)
-                const res = await axios.get('http://localhost:5000/api/projects/top');
+                const res = await getTopProjects();
                 setProjects(res.data);
             } catch (error) {
                 console.error('Error fetching projects:', error);

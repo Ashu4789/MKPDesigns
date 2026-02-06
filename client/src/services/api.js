@@ -29,6 +29,7 @@ export const getProfile = () => api.get('/auth/me');
 export const sendOTP = (email) => api.post('/auth/send-otp', { email });
 export const verifyOTP = (email, otp) => api.post('/auth/verify-otp', { email, otp });
 export const resendOTP = (email) => api.post('/auth/resend-otp', { email });
+export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
 
 // Google Auth APIs
 export const googleSignIn = (googleData) => api.post('/auth/google', googleData);
@@ -43,26 +44,6 @@ export const updatePreferences = (data) => api.put('/user/preferences', data);
 // Contact API
 export const sendContactMessage = (data) => api.post('/contact', data);
 
-// Reports API
-export const downloadReport = (reportId) => {
-  return api.get(`/reports/download/${reportId}`, {
-    responseType: 'blob'
-  });
-};
-
-export const getAllReports = () => api.get('/reports');
-
-export const uploadReport = (formData) => {
-  return api.post('/reports/upload', formData);
-};
-
-export const deleteReport = (reportId) => api.delete(`/reports/${reportId}`);
-
-export const downloadUploadedFile = (reportId) => {
-  return api.get(`/reports/file/${reportId}`, {
-    responseType: 'blob'
-  });
-};
 
 // Designs API
 export const uploadDesign = (formData) => {
@@ -80,5 +61,33 @@ export const getDesigns = (params) => {
 export const getDesignById = (id) => {
   return api.get(`/designs/${id}`);
 };
+// Projects API
+export const getProjects = () => {
+  return api.get('/projects');
+};
+
+export const getProjectById = (id) => {
+  return api.get(`/projects/${id}`);
+};
+
+export const getTopProjects = () => {
+  return api.get('/projects/top');
+};
+
+export const uploadProject = (formData) => {
+  return api.post('/projects', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const deleteProject = (id) => {
+  return api.delete(`/projects/${id}`);
+};
+
+// Dashboard API
+export const getDashboardStats = () => api.get('/dashboard/stats');
+export const getDashboardUpdates = () => api.get('/dashboard/updates');
 
 export default api;

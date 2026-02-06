@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import { getDashboardStats, getDashboardUpdates } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import ProjectsOverview from '../components/ProjectsOverview';
@@ -15,12 +15,9 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-
         const [statsRes, updatesRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/dashboard/stats`, config),
-          axios.get(`${import.meta.env.VITE_API_URL}/dashboard/updates`, config)
+          getDashboardStats(),
+          getDashboardUpdates()
         ]);
 
         setStats(statsRes.data);
@@ -37,12 +34,9 @@ const Overview = () => {
     // Polling for updates every 60 seconds
     const pollInterval = setInterval(async () => {
       try {
-        const token = localStorage.getItem('token');
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-
-        const updatesRes = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard/updates`, config);
+        const updatesRes = await getDashboardUpdates();
         const newUpdates = updatesRes.data;
-
+        setRecentUpdates(newUpdates);
       } catch (error) {
         console.error('Error polling updates:', error);
       }

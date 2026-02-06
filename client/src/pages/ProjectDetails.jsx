@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { getProjectById } from '../services/api';
 import ThreeDViewer from '../components/ThreeDViewer';
 import { MapPin, Calendar, Ruler, IndianRupee, ArrowLeft } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
+
 // import ImageGallery from 'react-image-gallery'; // Assuming this is installed as per package.json
 // Note: You might need to import CSS for image gallery if not already imported globally or in App.jsx
 // import "react-image-gallery/styles/css/image-gallery.css";
@@ -17,7 +18,7 @@ const ProjectDetails = () => {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/projects/${id}`);
+                const res = await getProjectById(id);
                 setProject(res.data);
             } catch (error) {
                 console.error('Error fetching project:', error);
