@@ -20,6 +20,7 @@ router.route('/')
     .post(protect, admin, uploadFields, uploadDesign);
 
 router.route('/:id')
-    .get(getDesignById);
+    .get(getDesignById)
+    .delete(protect, admin, require('../controllers/designController').deleteDesign);
 
 module.exports = router;

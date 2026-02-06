@@ -58,6 +58,10 @@ export const getDesigns = (params) => {
   return api.get('/designs', { params });
 };
 
+export const deleteDesign = (id) => {
+  return api.delete(`/designs/${id}`);
+};
+
 export const getDesignById = (id) => {
   return api.get(`/designs/${id}`);
 };

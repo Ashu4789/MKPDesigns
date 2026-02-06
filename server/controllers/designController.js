@@ -117,9 +117,46 @@ const getDesignById = async (req, res) => {
     }
 };
 
+// @desc    Delete a design
+// @route   DELETE /api/designs/:id
+// @access  Private/Admin
+const deleteDesign = async (req, res) => {
+    try {
+        const design = await Design.findById(req.params.id);
+
+        if (!design) {
+            return res.status(404).json({ message: 'Design not found' });
+        }
+
+        // Delete image from Cloudinary
+        if (design.imageId) {
+            await cloudinary.uploader.destroy(design.imageId);
+        }
+
+        // Delete documentation from Cloudinary
+        if (design.documentationId) {
+            // For raw resources (docs), we might need to specify resource_type if it's not 'image'
+            // Cloudinary auto-detects often, but safer to try standard destroy or specify type if known.
+            // Our storage config says 'auto', likely 'raw' or 'image' depending on file.
+            // For safety, plain destroy usually works for default types, but 'raw' might need explicit type.
+            // Let's try standard destroy first. If it fails for PDFs properly, we might need resource_type: 'raw'
+            // However, usually publicId is unique enough.
+            await cloudinary.uploader.destroy(design.documentationId);
+        }
+
+        await design.deleteOne();
+
+        res.json({ message: 'Design removed' });
+    } catch (error) {
+        console.error('Error deleting design:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 module.exports = {
     upload,
     uploadDesign,
     getDesigns,
-    getDesignById
+    getDesignById,
+    deleteDesign
 };

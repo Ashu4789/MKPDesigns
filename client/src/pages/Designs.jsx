@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { getDesigns } from '../services/api';
-import { Search, Filter, SlidersHorizontal, ArrowRight, IndianRupee, Cloud, Download, ShoppingBag, X, Loader2 } from 'lucide-react';
+import { getDesigns, deleteDesign } from '../services/api';
+import { Search, Filter, SlidersHorizontal, ArrowRight, IndianRupee, Cloud, Download, ShoppingBag, X, Loader2, Trash2 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
@@ -40,6 +40,23 @@ const Designs = () => {
             console.error('Error fetching designs:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async (e, id) => {
+        e.stopPropagation(); // Prevent opening the modal
+        if (window.confirm('Are you sure you want to delete this design? This action cannot be undone.')) {
+            try {
+                await deleteDesign(id);
+                setDesigns(designs.filter(design => design._id !== id));
+                if (selectedDesign && selectedDesign._id === id) {
+                    setSelectedDesign(null);
+                }
+                alert('Design deleted successfully');
+            } catch (error) {
+                console.error('Error deleting design:', error);
+                alert('Failed to delete design');
+            }
         }
     };
 
@@ -203,9 +220,18 @@ const Designs = () => {
                                         {/* Content */}
                                         <div className="p-6">
                                             <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-xl font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                                                <h3 className="text-xl font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors flex-1">
                                                     {design.title}
                                                 </h3>
+                                                {user?.role === 'admin' && (
+                                                    <button
+                                                        onClick={(e) => handleDelete(e, design._id)}
+                                                        className="ml-2 text-destructive hover:bg-destructive/10 p-1.5 rounded-full transition-colors z-20"
+                                                        title="Delete Design"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                )}
                                             </div>
 
                                             <p className="text-muted-foreground text-sm line-clamp-2 mb-4 h-10">
