@@ -11,7 +11,7 @@ import {
   X,
   Package,
   MapPin,
-  Users,
+  User,
   Upload,
   History,
   Calendar,
@@ -66,7 +66,7 @@ const DashboardLayout = ({ children }) => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-6 border-b border-border/50">
             <h2 className="flex items-center space-x-3">
-              <LayoutDashboard className="h-6 w-6 text-primary flex-shrink-0" />
+              <User className="h-6 w-6 text-primary flex-shrink-0" />
               <span className="hidden lg:inline-block lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200 text-xl font-bold text-foreground whitespace-nowrap overflow-hidden tracking-tight">
                 MKP Designs
               </span>
