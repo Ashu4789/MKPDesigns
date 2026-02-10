@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   TrendingUp,
-  DollarSign,
+  IndianRupeeIcon,
   FileText,
   Settings,
   Menu,
@@ -12,7 +12,10 @@ import {
   Package,
   MapPin,
   Users,
-  Upload
+  Upload,
+  History,
+  Calendar,
+  CheckSquare
 } from 'lucide-react';
 
 const DashboardLayout = ({ children }) => {
@@ -23,12 +26,17 @@ const DashboardLayout = ({ children }) => {
   const menuItems = [
     { name: 'Overview', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
     { name: 'Projects', icon: <Package className="h-5 w-5" />, path: '/projects' },
-    { name: 'Designs' , icon: <FileText className="h-5 w-5" />, path: '/designs' },
+    { name: 'Designs', icon: <FileText className="h-5 w-5" />, path: '/designs' },
   ];
 
   if (user && user.role === 'admin') {
+    menuItems.push({ name: 'Sales History', icon: <IndianRupeeIcon className="h-5 w-5" />, path: '/sales-history' });
+    menuItems.push({ name: 'Appt. Requests', icon: <CheckSquare className="h-5 w-5" />, path: '/appointment-requests' });
     menuItems.push({ name: 'Upload Design', icon: <Upload className="h-5 w-5" />, path: '/design-upload' });
     menuItems.push({ name: 'Upload Project', icon: <Package className="h-5 w-5" />, path: '/admin/upload-project' });
+  } else {
+    menuItems.push({ name: 'Purchase History', icon: <History className="h-5 w-5" />, path: '/purchase-history' });
+    menuItems.push({ name: 'Book Appointment', icon: <Calendar className="h-5 w-5" />, path: '/book-appointment' });
   }
 
   menuItems.push({ name: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/dashboard/settings' });

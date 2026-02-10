@@ -38,4 +38,41 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+
+const optionalProtect = async (req, res, next) => {
+  let token;
+
+  // Debug logs
+  console.log('OptionalProtect - Query:', req.query);
+  console.log('OptionalProtect - Auth Header:', req.headers.authorization ? 'Present' : 'Missing');
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.id).select('-password');
+      console.log('OptionalProtect - User found via Header:', req.user ? req.user._id : 'None');
+    } catch (error) {
+      console.error('Optional auth error (ignoring):', error.message);
+      // Don't fail, just continue as guest
+    }
+  } else if (req.query.token) {
+    // Check for token in query params (for file downloads)
+    try {
+      token = req.query.token;
+      // Handle case where token might be "null" or "undefined" string
+      if (token && token !== 'null' && token !== 'undefined') {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id).select('-password');
+        console.log('OptionalProtect - User found via Query:', req.user ? req.user._id : 'None');
+      } else {
+        console.log('OptionalProtect - Invalid token string in query:', token);
+      }
+    } catch (error) {
+      console.error('Optional auth query token error (ignoring):', error.message);
+    }
+  }
+  next();
+};
+
+module.exports = { protect, admin, optionalProtect };

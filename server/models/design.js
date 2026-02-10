@@ -34,13 +34,17 @@ const designSchema = new mongoose.Schema({
         required: [true, 'Please add a price'],
         min: 0
     },
-    documentationUrl: {
-        type: String,
-        // Not required, but good to have if applicable
-    },
-    documentationId: {
+    publicUrl: {
         type: String
-        // Cloudinary public_id for the document
+    },
+    publicId: {
+        type: String
+    },
+    privateUrl: {
+        type: String
+    },
+    privateId: {
+        type: String
     },
     createdAt: {
         type: Date,

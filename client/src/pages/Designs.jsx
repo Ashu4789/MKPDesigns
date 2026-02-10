@@ -1,15 +1,26 @@
 import { useState, useEffect, useContext } from 'react';
-import { getDesigns, deleteDesign } from '../services/api';
-import { Search, Filter, SlidersHorizontal, ArrowRight, IndianRupee, Cloud, Download, ShoppingBag, X, Loader2, Trash2 } from 'lucide-react';
+import { getDesigns, deleteDesign, getDesignDownloadUrl, getAuthenticatedDesignUrl, getDesignStats, checkPurchaseStatus } from '../services/api';
+import { Search, Filter, SlidersHorizontal, ArrowRight, IndianRupee, Cloud, Download, ShoppingBag, X, Loader2, Trash2, Users, TrendingUp, Lock, Unlock, CheckCircle } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { useRazorpay } from 'react-razorpay';
+import { createOrder, verifyPayment } from '../services/api';
 
 const Designs = () => {
     const { user } = useContext(AuthContext);
     const [designs, setDesigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDesign, setSelectedDesign] = useState(null);
+    const [designStats, setDesignStats] = useState(null);
+    const [statsLoading, setStatsLoading] = useState(false);
+    const [isPurchased, setIsPurchased] = useState(false);
+    const [purchaseCheckLoading, setPurchaseCheckLoading] = useState(false);
+
+    // Pagination
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalDesigns, setTotalDesigns] = useState(0);
 
     // Filters
     const [search, setSearch] = useState('');
@@ -23,23 +34,78 @@ const Designs = () => {
 
     useEffect(() => {
         fetchDesigns();
-    }, [filters, search]); // Simple debounce could be added for better performance
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters, search, page]); // Fetch on filter or page change
+
+    useEffect(() => {
+        if (selectedDesign) {
+            if (user?.role === 'admin') {
+                fetchDesignStats(selectedDesign._id);
+                setIsPurchased(true); // Admin has access
+            } else if (user) {
+                // Check if user purchased
+                verifyPurchase(selectedDesign._id);
+            } else {
+                setDesignStats(null);
+                setIsPurchased(false);
+            }
+        } else {
+            setDesignStats(null);
+            setIsPurchased(false);
+        }
+    }, [selectedDesign, user]);
+
+    const verifyPurchase = async (designId) => {
+        try {
+            setPurchaseCheckLoading(true);
+            const response = await checkPurchaseStatus(designId);
+            setIsPurchased(response.data.isPurchased);
+        } catch (error) {
+            console.error('Error checking purchase status:', error);
+            setIsPurchased(false);
+        } finally {
+            setPurchaseCheckLoading(false);
+        }
+    };
 
     const fetchDesigns = async () => {
         try {
             setLoading(true);
             const params = {
                 search,
+                page,
+                limit: 12,
                 ...filters
             };
             if (params.category === 'All') delete params.category;
 
             const response = await getDesigns(params);
-            setDesigns(response.data);
+
+            // Handle new paginated response structure
+            if (response.data.designs) {
+                setDesigns(response.data.designs);
+                setTotalPages(response.data.pages);
+                setTotalDesigns(response.data.total);
+            } else {
+                // Fallback for older API version if needed
+                setDesigns(response.data);
+            }
         } catch (error) {
             console.error('Error fetching designs:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchDesignStats = async (designId) => {
+        try {
+            setStatsLoading(true);
+            const response = await getDesignStats(designId);
+            setDesignStats(response.data);
+        } catch (error) {
+            console.error('Error fetching design stats:', error);
+        } finally {
+            setStatsLoading(false);
         }
     };
 
@@ -62,12 +128,85 @@ const Designs = () => {
 
     const handleFilterChange = (e) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
+        setPage(1); // Reset to first page on filter change
     };
 
-    const handleBuyRun = (design) => {
-        // Mock purchase flow
-        alert(`Initiating purchase for usage rights of "${design.title}" for ₹${design.price}. Check your email for next steps!`);
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
+
+    const { error, isLoading, Razorpay } = useRazorpay();
+
+    async function handleBuy(design) {
+        if (!user) {
+            alert('Please login to purchase designs');
+            return;
+        }
+        if (isLoading) {
+            alert('Payment system is loading, please wait...');
+            return;
+        }
+        if (error) {
+            alert('Failed to load payment system');
+            console.error('Razorpay load error:', error);
+            return;
+        }
+        if (!Razorpay) {
+            alert('Razorpay SDK not loaded');
+            return;
+        }
+
+        try {
+            // 1. Create Order
+            const orderResponse = await createOrder(design._id);
+            const order = orderResponse.data;
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: order.currency,
+                name: "MKP Designs",
+                description: `License for ${design.title}`,
+                image: design.imageUrl, // Optional
+                order_id: order.id,
+                handler: async (response) => {
+                    try {
+                        // 2. Verify Payment
+                        await verifyPayment(response);
+                        alert('Payment Successful! You can now download the design.');
+                        // Optionally refresh designs or redirect to purchase history
+                    } catch (error) {
+                        console.error('Payment verification failed:', error);
+                        alert('Payment verification failed. Please contact support.');
+                    }
+                },
+                prefill: {
+                    name: user.name,
+                    email: user.email,
+                    contact: user.phone || ''
+                },
+                notes: {
+                    address: "MKP Designs Corporate Office"
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+
+            const rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                alert(response.error.description);
+            });
+            rzp1.open();
+
+        } catch (error) {
+            console.error('Error initiating purchase:', error);
+            alert('Failed to initiate purchase. Please try again.');
+        }
+    }
 
     return (
         <>
@@ -111,7 +250,10 @@ const Designs = () => {
                                         type="text"
                                         placeholder="Search designs..."
                                         value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
+                                        onChange={(e) => {
+                                            setSearch(e.target.value);
+                                            setPage(1); // Reset to first page on search
+                                        }}
                                         className="w-full pl-10 pr-4 py-2 rounded-full bg-muted/50 border border-transparent focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                     />
                                 </div>
@@ -122,7 +264,10 @@ const Designs = () => {
                                         {['All', 'Residential', 'Commercial', 'Industrial', 'Landscape', 'Interior'].map((cat) => (
                                             <button
                                                 key={cat}
-                                                onClick={() => setFilters({ ...filters, category: cat })}
+                                                onClick={() => {
+                                                    setFilters({ ...filters, category: cat });
+                                                    setPage(1); // Reset to first page on category change
+                                                }}
                                                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${filters.category === cat
                                                     ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
                                                     : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -253,6 +398,31 @@ const Designs = () => {
                                 ))}
                             </div>
                         )}
+
+                        {/* Pagination Controls */}
+                        {!loading && designs.length > 0 && totalPages > 1 && (
+                            <div className="mt-12 flex justify-center items-center gap-4">
+                                <button
+                                    onClick={() => handlePageChange(page - 1)}
+                                    disabled={page === 1}
+                                    className="px-4 py-2 rounded-lg border border-border bg-card hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                >
+                                    Previous
+                                </button>
+
+                                <span className="text-sm font-medium text-muted-foreground">
+                                    Page <span className="text-foreground font-bold">{page}</span> of {totalPages}
+                                </span>
+
+                                <button
+                                    onClick={() => handlePageChange(page + 1)}
+                                    disabled={page === totalPages}
+                                    className="px-4 py-2 rounded-lg border border-border bg-card hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Detail Modal */}
@@ -317,36 +487,114 @@ const Designs = () => {
                                             </div>
                                         </div>
 
-                                        {selectedDesign.documentationUrl && (
-                                            <div>
-                                                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Documentation</h4>
+                                        {/* Documentation Section */}
+                                        <div>
+                                            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Documentation & Downloads</h4>
+
+                                            <div className="space-y-3">
+                                                {/* Public Resources - Always Visible */}
                                                 <a
-                                                    href={selectedDesign.documentationUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center p-3 bg-blue-500/10 text-blue-500 rounded-lg border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
+                                                    href={getDesignDownloadUrl(selectedDesign._id, 'public')}
+                                                    className="flex items-center p-3 bg-blue-500/10 text-blue-600 rounded-lg border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
                                                 >
                                                     <Download className="h-5 w-5 mr-3" />
                                                     <div className="flex-1">
-                                                        <span className="font-medium block">Project Report / Specs</span>
-                                                        <span className="text-xs opacity-70">Download PDF/Doc</span>
+                                                        <span className="font-medium block">Public Resources</span>
+                                                        <span className="text-xs opacity-70">Download Brochure/Specs</span>
                                                     </div>
                                                 </a>
+
+                                                {/* Private Project Details - Restricted */}
+                                                {(isPurchased || user?.role === 'admin') ? (
+                                                    <a
+                                                        href={getAuthenticatedDesignUrl(selectedDesign._id)}
+                                                        onClick={() => console.log('Downloading private file:', getAuthenticatedDesignUrl(selectedDesign._id))}
+                                                        className="flex items-center p-3 bg-green-500/10 text-green-600 rounded-lg border border-green-500/20 hover:bg-green-500/20 transition-colors"
+                                                    >
+                                                        <Unlock className="h-5 w-5 mr-3" />
+                                                        <div className="flex-1">
+                                                            <span className="font-medium block">Project Details</span>
+                                                            <span className="text-xs opacity-70">Full Documentation & Source Files</span>
+                                                        </div>
+                                                    </a>
+                                                ) : (
+                                                    <div className="flex items-center p-3 bg-muted/30 text-muted-foreground rounded-lg border border-border opacity-70 cursor-not-allowed">
+                                                        <Lock className="h-5 w-5 mr-3" />
+                                                        <div className="flex-1">
+                                                            <span className="font-medium block">Project Details</span>
+                                                            <span className="text-xs">Purchase license to unlock</span>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
 
                                     <div className="mt-8 pt-6 border-t border-border">
-                                        <button
-                                            onClick={() => handleBuyRun(selectedDesign)}
-                                            className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center"
-                                        >
-                                            <ShoppingBag className="mr-2 h-6 w-6" />
-                                            Buy License
-                                        </button>
-                                        <p className="text-center text-xs text-muted-foreground mt-3">
-                                            Secure payment powered by Stripe (Mock)
-                                        </p>
+                                        {user?.role === 'admin' ? (
+                                            <div>
+                                                <h3 className="text-lg font-bold text-foreground mb-4">Design Statistics</h3>
+                                                {statsLoading ? (
+                                                    <div className="flex justify-center py-4">
+                                                        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                                                    </div>
+                                                ) : designStats ? (
+                                                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div className="bg-muted/30 p-4 rounded-xl border border-border">
+                                                                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                                                    <ShoppingBag className="h-4 w-4" />
+                                                                    <span className="text-xs font-semibold uppercase">Total Sales</span>
+                                                                </div>
+                                                                <p className="text-2xl font-bold text-foreground">{designStats.totalSales}</p>
+                                                            </div>
+                                                            <div className="bg-muted/30 p-4 rounded-xl border border-border">
+                                                                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                                                    <IndianRupee className="h-4 w-4" />
+                                                                    <span className="text-xs font-semibold uppercase">Total Revenue</span>
+                                                                </div>
+                                                                <p className="text-2xl font-bold text-primary">₹{designStats.totalRevenue.toLocaleString()}</p>
+                                                            </div>
+                                                        </div>
+
+                                                        {designStats.recentBuyers && designStats.recentBuyers.length > 0 && (
+                                                            <div>
+                                                                <h4 className="text-sm font-medium text-muted-foreground mb-2">Recent Buyers</h4>
+                                                                <div className="bg-muted/20 rounded-xl border border-border max-h-40 overflow-y-auto">
+                                                                    {designStats.recentBuyers.map((tx) => (
+                                                                        <div key={tx._id} className="p-3 border-b border-border last:border-0 flex justify-between items-center text-sm">
+                                                                            <div className="font-medium">{tx.user?.name || 'Unknown User'}</div>
+                                                                            <div className="text-muted-foreground text-xs">{new Date(tx.createdAt).toLocaleDateString()}</div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-muted-foreground">No data available.</p>
+                                                )}
+                                            </div>
+                                        ) : isPurchased ? (
+                                            <div className="w-full py-4 bg-green-500/10 text-green-600 rounded-xl font-bold text-lg border border-green-500/20 flex items-center justify-center">
+                                                <CheckCircle className="mr-2 h-6 w-6" />
+                                                License Purchased
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => handleBuy(selectedDesign)}
+                                                    className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center"
+                                                >
+                                                    <ShoppingBag className="mr-2 h-6 w-6" />
+                                                    Buy License
+                                                </button>
+                                                <p className="text-center text-xs text-muted-foreground mt-3">
+                                                    Powered by Razorpay
+                                                </p>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
 

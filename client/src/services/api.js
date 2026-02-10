@@ -67,6 +67,15 @@ export const deleteDesign = (id) => {
 export const getDesignById = (id) => {
   return api.get(`/designs/${id}`);
 };
+
+// Helper to get download URL
+export const getDesignDownloadUrl = (id, type = 'public') => `${API_URL}/designs/${id}/download?type=${type}`;
+export const getAuthenticatedDesignUrl = (id) => {
+  const token = localStorage.getItem('token');
+  console.log('Generating Auth URL for:', id, 'Token:', token ? 'Present' : 'Missing');
+  return `${API_URL}/designs/${id}/download?type=private&token=${token || ''}&v=2`;
+};
+
 // Projects API
 export const getProjects = () => {
   return api.get('/projects');
@@ -95,5 +104,20 @@ export const deleteProject = (id) => {
 // Dashboard API
 export const getDashboardStats = () => api.get('/dashboard/stats');
 export const getDashboardUpdates = () => api.get('/dashboard/updates');
+
+// Transaction APIs
+export const createOrder = (designId) => api.post('/transactions/order', { designId });
+export const verifyPayment = (paymentData) => api.post('/transactions/verify', paymentData);
+export const getUserTransactions = () => api.get('/transactions/my-orders');
+export const getSalesHistory = (params) => api.get('/transactions/admin/all', { params });
+export const getDesignStats = (designId) => api.get(`/transactions/design/${designId}/stats`);
+
+export const checkPurchaseStatus = (designId) => {
+  return api.get(`/transactions/check/${designId}`);
+};
+// Appointment APIs
+export const bookAppointment = (data) => api.post('/appointments', data);
+export const getAppointments = () => api.get('/appointments');
+export const updateAppointment = (id, data) => api.put(`/appointments/${id}`, data);
 
 export default api;

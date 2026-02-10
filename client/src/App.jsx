@@ -17,6 +17,10 @@ import DesignUpload from './pages/DesignUpload';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
 import AdminProjectUpload from './pages/AdminProjectUpload';
+import PurchaseHistory from './pages/PurchaseHistory';
+import SalesHistory from './pages/SalesHistory';
+import SetAppointment from './pages/SetAppointment';
+import AppointmentRequests from './pages/AppointmentRequests';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -82,6 +86,40 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AdminProjectUpload />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/purchase-history"
+                  element={
+                    <ProtectedRoute>
+                      <PurchaseHistory />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/sales-history"
+                  element={
+                    <ProtectedRoute>
+                      <SalesHistory />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/book-appointment"
+                  element={
+                    <ProtectedRoute>
+                      <SetAppointment />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/appointment-requests"
+                  element={
+                    <ProtectedRoute>
+                      <AppointmentRequests />
                     </ProtectedRoute>
                   }
                 />
