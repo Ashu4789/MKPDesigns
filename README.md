@@ -30,9 +30,43 @@ Advanced architecture portfolio and project management platform built with the M
 - **Dashboard & Management**
     - **Projects**: Comprehensive project management view with details.
     - **Designs**: Architecture design portfolio with gallery view.
+    - **Secure Downloads**:
+        - Public resources available to all.
+        - Private project details (CAD/PDF) restricted to authenticated purchasers.
+    - **Payments & Invoicing**:
+        - Integrated **Razorpay** payment gateway for design purchases.
+        - Automated **PDF Invoice Generation** emailed to users and admins.
+        - Downloadable invoices from transaction history.
     - **Admin Tools**:
         - Upload and manage Projects and Designs.
         - **Deletion Control**: Admins can safely delete projects and designs (auto-removes assets from Cloudinary).
+
+    // ... (rest of the file) ...
+
+**Server (`server/.env`):**
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=30d
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+# Email (Nodemailer)
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+# Google Auth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+CLIENT_URL=http://localhost:5173
+# Razorpay
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+# Admin
+ADMIN_EMAIL=your_admin_email@gmail.com
+```
 - **User Profile**
     - Profile management with organizational details.
     - Customizable preferences.
@@ -65,7 +99,9 @@ For a detailed breakdown of libraries and their usage, see [LIBRARY_USAGE.md](./
 -   **Database**: MongoDB (Mongoose ODM)
 -   **Authentication**: JWT, Passport.js, Bcryptjs
 -   **File Storage**: Cloudinary (Multer storage)
--   **Email**: Nodemailer (OTP/Notifications/Password Reset)
+-   **Email**: Nodemailer (OTP/Notifications/Password Reset/Invoices)
+-   **Payments**: Razorpay
+-   **PDF Generation**: PDFKit
 -   **Security**: Helmet, Express-Rate-Limit, XSS-Clean, HPP
 -   **Validation**: Joi
 

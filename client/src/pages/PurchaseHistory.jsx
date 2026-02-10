@@ -92,21 +92,13 @@ const PurchaseHistory = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     {transaction.status === 'completed' && (
                                                         <div className="flex flex-col space-y-2 text-right">
-                                                            {transaction.design && (
-                                                                <a
-                                                                    href={getDesignDownloadUrl(transaction.design)}
-                                                                    className="text-primary hover:text-primary/80 inline-flex items-center hover:underline justify-end"
-                                                                >
-                                                                    <Download className="h-4 w-4 mr-1" />
-                                                                    Download Design
-                                                                </a>
-                                                            )}
                                                             <a
                                                                 href={getInvoiceUrl(transaction._id)}
-                                                                className="text-muted-foreground hover:text-foreground inline-flex items-center hover:underline text-xs justify-end"
+                                                                className="text-red-500 hover:text-red-700 inline-flex items-center hover:underline text-xs justify-end"
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                             >
+                                                                <Download className="h-4 w-4 mr-1" />
                                                                 Download Invoice
                                                             </a>
                                                         </div>

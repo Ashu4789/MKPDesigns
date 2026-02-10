@@ -53,14 +53,26 @@ Upon logging in, regular users have access to the following flows:
 -   **View**: See a summary of recent designs, projects, and personal account stats.
 -   **Actions**: Quick links to view more designs or projects.
 
-### B. Browsing Designs
+### B. Browsing & Purchasing Designs
 -   **Path**: `/designs`
 -   **View**: Gallery grid of architectural designs.
 -   **Interactions**:
     -   Click on a design to view full-size image/details.
-    -   Filter designs by category (Interior, Exterior, Landscape, etc.).
+    -   **Free Downloads**: Download public resources immediately.
+    -   **Purchase Flow**:
+        1.  Click "Buy Now" on a premium design.
+        2.  Complete payment via **Razorpay** popup.
+        3.  On success, redirect to confirmation and receive email with **Invoice PDF**.
+        4.  **Premium Access**: "Buy Now" button changes to "Download Project Details".
 
-### C. Browsing Projects
+### C. Transaction History & Invoices
+-   **Path**: `/history` (Purchase History)
+-   **View**: List of all purchased designs with payment status.
+-   **Actions**:
+    -   **Download Design**: Re-download the premium design assets.
+    -   **Download Invoice**: Download the official PDF invoice for the transaction.
+
+### D. Browsing Projects
 -   **Path**: `/projects`
 -   **View**: List of detailed architectural projects.
 -   **Interactions**:

@@ -89,6 +89,16 @@ This document provides a detailed overview of the key libraries and technologies
         -   Used in `server/controllers/passwordController.js` for **Forgot Password** emails.
     -   *Logic*: Configured with Gmail SMTP to send HTML-formatted emails containing verification codes and reset links.
 
+### Payments
+-   **Razorpay** (`razorpay`): Payment gateway integration.
+    -   *Usage*: Handles order creation and payment verification in `server/controllers/transactionController.js`.
+    -   *Frontend*: Uses `react-razorpay` to render the payment modal and handle success/failure callbacks.
+
+### Document Generation
+-   **PDFKit** (`pdfkit`): complex PDF generation for Node.js.
+    -   *Usage*: Generates professional invoices on-the-fly in `server/utils/invoiceGenerator.js`.
+    -   *Implementation*: Creates a stream-able PDF document with custom styling, tables, and images, which is then attached to emails or sent as a download.
+
 ### Utilities
 -   **Joi** (`joi`): JavaScript object schema description language and validator for data.
     -   *Usage*: Used for backend request body validation to ensure data integrity before database insertion.

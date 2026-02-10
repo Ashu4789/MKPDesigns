@@ -54,6 +54,7 @@ app.use('/api/designs', require('./routes/designs'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 
 // Basic route
