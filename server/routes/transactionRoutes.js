@@ -7,7 +7,8 @@ const {
     getUserTransactions,
     getSalesHistory,
     getDesignStats,
-    checkPurchaseStatus
+    checkPurchaseStatus,
+    downloadInvoice
 } = require('../controllers/transactionController');
 
 // User Routes
@@ -19,5 +20,6 @@ router.get('/my-orders', protect, getUserTransactions);
 router.get('/admin/all', protect, admin, getSalesHistory);
 router.get('/design/:designId/stats', protect, admin, getDesignStats);
 router.get('/check/:designId', protect, checkPurchaseStatus);
+router.get('/:id/invoice', protect, downloadInvoice);
 
 module.exports = router;

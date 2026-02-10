@@ -24,6 +24,26 @@ const protect = async (req, res, next) => {
       console.error('Auth middleware error:', error);
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
+  } else if (req.query.token) {
+    // Check for token in query params (for file downloads)
+    try {
+      token = req.query.token;
+
+      if (token && token !== 'null' && token !== 'undefined') {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id).select('-password');
+
+        if (!req.user) {
+          return res.status(401).json({ message: 'User not found' });
+        }
+        next();
+      } else {
+        return res.status(401).json({ message: 'Not authorized, invalid query token' });
+      }
+    } catch (error) {
+      console.error('Auth middleware query token error:', error.message);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
+    }
   } else {
     return res.status(401).json({ message: 'Not authorized, no token' });
   }

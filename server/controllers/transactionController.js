@@ -92,6 +92,10 @@ const verifyPayment = async (req, res) => {
     }
 };
 
+const { generateInvoicePDF } = require('../utils/invoiceGenerator');
+
+// ... (existing imports)
+
 // Helper: Send Transaction Emails
 const sendTransactionEmails = async (transaction, user) => {
     try {
@@ -102,6 +106,15 @@ const sendTransactionEmails = async (transaction, user) => {
                 pass: process.env.EMAIL_PASS
             }
         });
+
+        // Generate Invoice PDF
+        const pdfBuffer = await generateInvoicePDF(transaction, user);
+
+        const attachments = [{
+            filename: `Invoice-${transaction.razorpayPaymentId}.pdf`,
+            content: pdfBuffer,
+            contentType: 'application/pdf'
+        }];
 
         // Basic HTML email template - improved
         const mailOptions = {
@@ -116,11 +129,13 @@ const sendTransactionEmails = async (transaction, user) => {
                     <p>Amount Paid: <strong>₹${transaction.amount}</strong></p>
                     <p>Transaction ID: ${transaction.razorpayPaymentId}</p>
                     <p>You can now download the project details from your dashboard or the design page.</p>
+                    <p>Please find the invoice attached.</p>
                     <br>
                     <p>Best Regards,</p>
                     <p>MKP Designs Team</p>
                 </div>
-            `
+            `,
+            attachments
         };
 
         const adminMailOptions = {
@@ -134,8 +149,10 @@ const sendTransactionEmails = async (transaction, user) => {
                     <p><strong>Amount:</strong> ₹${transaction.amount}</p>
                     <p><strong>Buyer:</strong> ${user.name} (${user.email})</p>
                     <p><strong>Transaction ID:</strong> ${transaction.razorpayPaymentId}</p>
+                    <p>Invoice attached for record.</p>
                 </div>
-            `
+            `,
+            attachments
         };
 
         await transporter.sendMail(mailOptions);
@@ -250,11 +267,45 @@ const getDesignStats = async (req, res) => {
     }
 };
 
+// @desc    Download Invoice
+// @route   GET /api/transactions/:id/invoice
+// @access  Private
+const downloadInvoice = async (req, res) => {
+    try {
+        const transaction = await Transaction.findById(req.params.id);
+
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        // Verify ownership or admin
+        if (transaction.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        const user = await User.findById(transaction.user);
+        const pdfBuffer = await generateInvoicePDF(transaction, user);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename=Invoice-${transaction.razorpayPaymentId}.pdf`,
+            'Content-Length': pdfBuffer.length
+        });
+
+        res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error('Error downloading invoice:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 module.exports = {
     createOrder,
     verifyPayment,
     getUserTransactions,
     getSalesHistory,
     getDesignStats,
-    checkPurchaseStatus
+    checkPurchaseStatus,
+    downloadInvoice
 };

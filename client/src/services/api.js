@@ -115,6 +115,11 @@ export const getDesignStats = (designId) => api.get(`/transactions/design/${desi
 export const checkPurchaseStatus = (designId) => {
   return api.get(`/transactions/check/${designId}`);
 };
+
+export const getInvoiceUrl = (transactionId) => {
+  const token = localStorage.getItem('token');
+  return `${API_URL}/transactions/${transactionId}/invoice?token=${token || ''}`;
+};
 // Appointment APIs
 export const bookAppointment = (data) => api.post('/appointments', data);
 export const getAppointments = () => api.get('/appointments');
