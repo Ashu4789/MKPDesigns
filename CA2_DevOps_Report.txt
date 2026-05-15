@@ -57,6 +57,12 @@ C. Jenkins (Continuous Deployment)
 [Screenshot Slot: Jenkins Blue Ocean / Stage view showing successful deployment]
 [Screenshot Slot: GitHub Webhook configuration in repository settings]
 
+Execution Details (Phase 3C):
+- Created a declarative `Jenkinsfile` in the root repository to orchestrate the CD pipeline.
+- Defined discrete stages: `Checkout` (pulling latest code), `Build Docker Images` (executing docker-compose build), and `Deploy Containers` (running docker-compose up -d).
+- Configured post-build actions to log the success or failure of the pipeline.
+- Committed the Jenkinsfile via the `feature/jenkins-pipeline` branch and merged it into `main`.
+
 
 4. PROJECT FILE / DOCUMENTATION (10 Marks)
 -----------------------------------------
