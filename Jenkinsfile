@@ -7,8 +7,9 @@ pipeline {
                 // Checkout code from git repository
                 checkout scm
                 script {
-                    echo "Creating dummy .env files for docker-compose..."
-                    sh "touch server/.env client/.env"
+                    echo "Injecting real .env secrets from secure Jenkins vault..."
+                    sh "cp /var/jenkins_home/secure_envs/server.env server/.env"
+                    sh "cp /var/jenkins_home/secure_envs/client.env client/.env"
                 }
             }
         }

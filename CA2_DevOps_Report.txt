@@ -94,4 +94,4 @@ Challenge 2: Git Workspace Ownership / Directory Errors
 
 Challenge 3: Missing `.env` Files in Jenkins Workspace
 - Issue: The `Deploy Containers` stage failed with `env file server/.env not found`. Because `.env` files are securely added to `.gitignore`, they were not pushed to GitHub, meaning Jenkins couldn't find them when running `docker-compose up`.
-- Solution: Updated the `Jenkinsfile` to automatically inject/create placeholder `.env` files immediately after the Checkout stage so that Docker Compose can successfully orchestrate the containers.
+- Solution: Simulated a secure credentials vault. Rather than committing secrets or using dummy files, I securely mounted the actual `.env` files into a persistent Jenkins vault path (`/var/jenkins_home/secure_envs/`). The `Jenkinsfile` was then updated to automatically inject these real secrets into the workspace during the CI/CD pipeline right before deployment.
