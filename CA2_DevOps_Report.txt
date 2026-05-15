@@ -8,10 +8,10 @@ Project Title: Automated CI/CD Pipeline for MKPDesigns (MERN Stack)
 Tools Used: Docker, Jenkins, GitHub Actions
 Architecture/Workflow:
 - Code Push -> GitHub Repository
-- Pull Request -> GitHub Actions (CI: Linting & Testing)
+- Pull Request -> GitHub Actions (CI: Linting, Testing, Security Audits, Docker Validation)
 - Merge to Main -> Webhook triggers Jenkins
-- Jenkins (CD) -> Build Docker Images -> Push to DockerHub -> Deploy Containers
-Expected Results: Automated, zero-downtime deployments with consistent Dockerized environments.
+- Jenkins (CD) -> Build Docker Images -> Secure Secret Injection -> Deploy Containers
+Expected Results: Automated, zero-downtime deployments with consistent Dockerized environments, enforced security scanning, and strict version control.
 
 
 2. GITHUB REPOSITORY MAINTENANCE (25 Marks)
@@ -21,11 +21,11 @@ Expected Results: Automated, zero-downtime deployments with consistent Dockerize
 [Screenshot Slot: Commit History demonstrating meaningul commits]
 [Screenshot Slot: README.md rendering properly]
 
-Execution Details (Phase 1):
-- Created a dedicated feature branch (`feature/setup-ci-cd`) to adopt professional branching strategies.
-- Updated the repository's `README.md` to document the CI/CD pipeline architecture clearly.
-- Committed the changes with conventional commit messages (e.g., `docs: update README with CI/CD architecture`).
-- Merged the feature branch into `main` to demonstrate proper workflow.
+In-Depth Execution Details (Phase 1):
+- Repository Initialization & Structure: Organized the MERN stack codebase into discrete `client/` and `server/` directories, allowing for independent microservice containerization.
+- Advanced Branching Strategy: Strict adherence to GitFlow principles. All CI/CD infrastructure code was developed on isolated feature branches (e.g., `feature/setup-ci-cd`, `feature/dockerize-app`, `feature/github-actions`, `feature/jenkins-pipeline`).
+- Simulated Pull Requests: Utilized `--no-ff` (no fast-forward) merges to maintain a highly readable, non-linear Git commit history. This explicitly demonstrates when branches diverged and were merged back into `main`, replicating a professional Pull Request review cycle.
+- Meaningful Version Control: Utilized conventional commit messages (`feat:`, `docs:`, `ci:`, `fix:`) to maintain an industry-standard commit log.
 
 
 3. IMPLEMENTATION (35 Marks)
@@ -36,43 +36,37 @@ A. Dockerization
 [Screenshot Slot: docker-compose.yml]
 [Screenshot Slot: Terminal output of `docker-compose up` or `docker ps` showing running containers]
 
-Execution Details (Phase 3A):
-- Implemented Microservices Architecture by creating isolated `Dockerfile`s for `client` and `server`.
-- Configured `.dockerignore` files to prevent unnecessary files (like `node_modules` and `.env`) from being copied into the images, ensuring security and optimizing build sizes.
-- Created a `docker-compose.yml` to orchestrate the containers, mapping port 5000 for the backend and 5173 for the frontend, while securely injecting environment variables from local `.env` files.
-- Committed the containerization logic to a feature branch (`feature/dockerize-app`) and successfully merged into `main`.
+In-Depth Execution Details (Phase 3A):
+- Containerized Microservices: Authored optimized `Dockerfile`s for both the React/Vite client and the Node/Express backend based on the lightweight `node:18-alpine` image.
+- Image Optimization & Security: Implemented strict `.dockerignore` policies to prevent bulky `node_modules` and sensitive `.env` files from being baked into the Docker image layers.
+- Container Orchestration: Developed a `docker-compose.yml` to orchestrate the multi-container environment. Mapped port 5000 for the backend API and port 5173 for the frontend client, enabling simultaneous execution and unified networking.
 
 B. GitHub Actions (Continuous Integration)
 [Screenshot Slot: GitHub Actions workflow file ci.yml]
-[Screenshot Slot: GitHub Actions interface showing a successful build/test run (Green ticks)]
+[Screenshot Slot: GitHub Actions interface showing a successful build/test run]
 
-Execution Details (Phase 3B):
-- Established a Continuous Integration pipeline by creating `.github/workflows/ci.yml`.
-- Implemented DevSecOps practices by adding a `security.yml` action to perform automated dependency vulnerability scanning using `npm audit`.
-- Added a `docker-check.yml` action to automatically dry-run Docker builds on Pull Requests, preventing broken infrastructure code from reaching the `main` branch.
-- Configured the workflow to trigger automatically on `push` and `pull_request` events to the `main` branch.
-- Automated the setup of the Node.js environment, installation of dependencies for both `client` and `server`, and compilation of the client build to ensure code integrity.
-- Committed the CI workflow via a dedicated feature branch (`feature/github-actions` and `feature/additional-actions`) and merged into `main` to trigger the first run.
+In-Depth Execution Details (Phase 3B):
+- Automated CI Pipeline (`ci.yml`): Triggered dynamically on Push and Pull Request events to the `main` branch. Automates the instantiation of an Ubuntu environment, setups Node.js, and installs dependencies.
+- DevSecOps Implementation (`security.yml`): Added an automated security audit workflow that runs `npm audit` across all dependencies, immediately flagging vulnerabilities before they reach production.
+- Pre-Deployment Validation (`docker-check.yml`): Designed an action to automatically perform a "dry-run" build of all Dockerfiles on Pull Requests, preventing broken infrastructure code from corrupting the main branch.
 
 C. Jenkins (Continuous Deployment)
 [Screenshot Slot: Jenkins Pipeline configuration / Jenkinsfile]
 [Screenshot Slot: Jenkins Blue Ocean / Stage view showing successful deployment]
 [Screenshot Slot: GitHub Webhook configuration in repository settings]
 
-Execution Details (Phase 3C):
-- Created a declarative `Jenkinsfile` in the root repository to orchestrate the CD pipeline.
-- Defined discrete stages: `Checkout` (pulling latest code), `Build Docker Images` (executing docker-compose build), and `Deploy Containers` (running docker-compose up -d).
-- Configured post-build actions to log the success or failure of the pipeline.
-- Committed the Jenkinsfile via the `feature/jenkins-pipeline` branch and merged it into `main`.
+In-Depth Execution Details (Phase 3C):
+- Declarative Pipeline (`Jenkinsfile`): Authored a robust pipeline stored in version control containing distinct stages: SCM Checkout, Secret Vault Injection, Docker Image Build, and Container Deployment.
+- Secure Vault Integration: Rather than committing sensitive `.env` secrets or using dummy files, an isolated secret vault was established inside the Jenkins host environment (`/var/jenkins_home/secure_envs/`). The Jenkinsfile is programmed to securely copy these secrets into the build workspace exactly at runtime, mimicking an enterprise HashiCorp Vault / AWS Secrets Manager setup.
 
 
 4. PROJECT FILE / DOCUMENTATION (10 Marks)
 -----------------------------------------
 Introduction & Objectives:
-To eliminate manual deployment processes and enforce code quality checks by building an automated CI/CD pipeline.
+The primary objective was to eliminate risky, manual deployment processes and enforce strict code quality and security checks. By building a fully automated CI/CD pipeline, the development lifecycle is drastically accelerated while maintaining environment consistency.
 
 Observations & Conclusion:
-The integration of GitHub Actions and Jenkins successfully created a robust pipeline. Actions handled rapid CI feedback for developers, while Jenkins reliably managed the CD process by building and deploying Docker containers.
+The integration of GitHub Actions and Jenkins created a highly resilient deployment pipeline. GitHub Actions excelled at providing immediate CI feedback (testing and security audits) for developers directly in the Pull Request UI. Simultaneously, Jenkins proved to be incredibly reliable for the CD process, handling the heavy lifting of securely injecting environment variables and orchestrating the Docker container deployments.
 
 
 5. VIVA PREPARATION (20 Marks)
@@ -84,14 +78,14 @@ The integration of GitHub Actions and Jenkins successfully created a robust pipe
 
 6. CHALLENGES FACED & SOLUTIONS
 -----------------------------------------
-Challenge 1: Docker-in-Docker (DIND) Missing Dependencies
-- Issue: Jenkins pipeline failed with `docker-compose: not found` because the Jenkins instance was isolated inside its own container without Docker access.
-- Solution: Restarted the Jenkins container as the `root` user, mounted the host machine's Docker socket (`-v /var/run/docker.sock:/var/run/docker.sock`), and installed the Docker CLI and Docker Compose directly inside the Jenkins container.
+Challenge 1: Docker-in-Docker (DIND) Constraints
+- Issue: The initial Jenkins pipeline failed with `docker-compose: not found` because the Jenkins instance was isolated inside its own container without access to the host's Docker Engine.
+- Solution: Restarted the Jenkins container as the `root` user and securely mounted the host machine's Docker socket (`-v /var/run/docker.sock:/var/run/docker.sock`). I then installed the Docker CLI inside Jenkins, bridging the containerized Jenkins to the host Docker daemon.
 
-Challenge 2: Git Workspace Ownership / Directory Errors
-- Issue: Jenkins threw `fatal: not in a git directory` (Exit Code 128) when attempting to checkout the repository. This occurred because running the container as root caused a security mismatch with the git directory ownership.
-- Solution: Cleared the corrupted Jenkins workspace and globally configured git inside the container to trust the directory using `git config --global --add safe.directory '*'`.
+Challenge 2: Git Workspace Security Mismatches
+- Issue: Jenkins threw `fatal: not in a git directory` (Exit Code 128) when checking out the SCM. This occurred because running the Jenkins container as root caused a security mismatch with the git directory ownership.
+- Solution: Executed a deep clean of the corrupted Jenkins workspace and globally configured Git inside the container to trust the directory using `git config --global --add safe.directory '*'`.
 
-Challenge 3: Missing `.env` Files in Jenkins Workspace
-- Issue: The `Deploy Containers` stage failed with `env file server/.env not found`. Because `.env` files are securely added to `.gitignore`, they were not pushed to GitHub, meaning Jenkins couldn't find them when running `docker-compose up`.
-- Solution: Simulated a secure credentials vault. Rather than committing secrets or using dummy files, I securely mounted the actual `.env` files into a persistent Jenkins vault path (`/var/jenkins_home/secure_envs/`). The `Jenkinsfile` was then updated to automatically inject these real secrets into the workspace during the CI/CD pipeline right before deployment.
+Challenge 3: Missing `.env` Secrets During Jenkins Deployment
+- Issue: The `Deploy Containers` stage failed because `docker-compose up` requires `.env` files, which are securely `.gitignore`d and absent from GitHub. 
+- Solution: Built a secure credentials vault on the Jenkins host. I injected the real `.env` variables securely during the pipeline execution (via the `Jenkinsfile`), preventing secrets from leaking into version control while ensuring full application functionality.
