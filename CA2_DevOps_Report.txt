@@ -80,3 +80,14 @@ The integration of GitHub Actions and Jenkins successfully created a robust pipe
 - Be ready to demonstrate a live code change pushing through the pipeline.
 - Be able to explain the difference between CI and CD.
 - Understand basic Docker commands (build, run, ps, logs).
+
+
+6. CHALLENGES FACED & SOLUTIONS
+-----------------------------------------
+Challenge 1: Docker-in-Docker (DIND) Missing Dependencies
+- Issue: Jenkins pipeline failed with `docker-compose: not found` because the Jenkins instance was isolated inside its own container without Docker access.
+- Solution: Restarted the Jenkins container as the `root` user, mounted the host machine's Docker socket (`-v /var/run/docker.sock:/var/run/docker.sock`), and installed the Docker CLI and Docker Compose directly inside the Jenkins container.
+
+Challenge 2: Git Workspace Ownership / Directory Errors
+- Issue: Jenkins threw `fatal: not in a git directory` (Exit Code 128) when attempting to checkout the repository. This occurred because running the container as root caused a security mismatch with the git directory ownership.
+- Solution: Cleared the corrupted Jenkins workspace and globally configured git inside the container to trust the directory using `git config --global --add safe.directory '*'`.
