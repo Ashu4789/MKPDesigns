@@ -46,6 +46,12 @@ B. GitHub Actions (Continuous Integration)
 [Screenshot Slot: GitHub Actions workflow file ci.yml]
 [Screenshot Slot: GitHub Actions interface showing a successful build/test run (Green ticks)]
 
+Execution Details (Phase 3B):
+- Established a Continuous Integration pipeline by creating `.github/workflows/ci.yml`.
+- Configured the workflow to trigger automatically on `push` and `pull_request` events to the `main` branch.
+- Automated the setup of the Node.js environment, installation of dependencies for both `client` and `server`, and compilation of the client build to ensure code integrity.
+- Committed the CI workflow via a dedicated feature branch (`feature/github-actions`) and merged into `main` to trigger the first run.
+
 C. Jenkins (Continuous Deployment)
 [Screenshot Slot: Jenkins Pipeline configuration / Jenkinsfile]
 [Screenshot Slot: Jenkins Blue Ocean / Stage view showing successful deployment]
