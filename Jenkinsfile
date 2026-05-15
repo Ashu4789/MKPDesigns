@@ -6,6 +6,10 @@ pipeline {
             steps {
                 // Checkout code from git repository
                 checkout scm
+                script {
+                    echo "Creating dummy .env files for docker-compose..."
+                    sh "touch server/.env client/.env"
+                }
             }
         }
 
