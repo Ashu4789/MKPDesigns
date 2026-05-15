@@ -36,6 +36,12 @@ A. Dockerization
 [Screenshot Slot: docker-compose.yml]
 [Screenshot Slot: Terminal output of `docker-compose up` or `docker ps` showing running containers]
 
+Execution Details (Phase 3A):
+- Implemented Microservices Architecture by creating isolated `Dockerfile`s for `client` and `server`.
+- Configured `.dockerignore` files to prevent unnecessary files (like `node_modules` and `.env`) from being copied into the images, ensuring security and optimizing build sizes.
+- Created a `docker-compose.yml` to orchestrate the containers, mapping port 5000 for the backend and 5173 for the frontend, while securely injecting environment variables from local `.env` files.
+- Committed the containerization logic to a feature branch (`feature/dockerize-app`) and successfully merged into `main`.
+
 B. GitHub Actions (Continuous Integration)
 [Screenshot Slot: GitHub Actions workflow file ci.yml]
 [Screenshot Slot: GitHub Actions interface showing a successful build/test run (Green ticks)]
