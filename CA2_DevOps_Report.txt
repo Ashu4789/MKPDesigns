@@ -48,9 +48,11 @@ B. GitHub Actions (Continuous Integration)
 
 Execution Details (Phase 3B):
 - Established a Continuous Integration pipeline by creating `.github/workflows/ci.yml`.
+- Implemented DevSecOps practices by adding a `security.yml` action to perform automated dependency vulnerability scanning using `npm audit`.
+- Added a `docker-check.yml` action to automatically dry-run Docker builds on Pull Requests, preventing broken infrastructure code from reaching the `main` branch.
 - Configured the workflow to trigger automatically on `push` and `pull_request` events to the `main` branch.
 - Automated the setup of the Node.js environment, installation of dependencies for both `client` and `server`, and compilation of the client build to ensure code integrity.
-- Committed the CI workflow via a dedicated feature branch (`feature/github-actions`) and merged into `main` to trigger the first run.
+- Committed the CI workflow via a dedicated feature branch (`feature/github-actions` and `feature/additional-actions`) and merged into `main` to trigger the first run.
 
 C. Jenkins (Continuous Deployment)
 [Screenshot Slot: Jenkins Pipeline configuration / Jenkinsfile]
