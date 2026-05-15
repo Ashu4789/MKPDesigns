@@ -1,0 +1,18 @@
+name: Docker Build Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Test Server Dockerfile Build
+        run: docker build -t mkpdesigns_server:test ./server
+
+      - name: Test Client Dockerfile Build
+        run: docker build -t mkpdesigns_client:test ./client

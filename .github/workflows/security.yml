@@ -1,0 +1,29 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0' # Runs every Sunday at midnight
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24'
+
+      - name: Run NPM Audit on Server
+        working-directory: ./server
+        run: npm audit --audit-level=high || echo "Vulnerabilities found, but allowing build to pass for now"
+
+      - name: Run NPM Audit on Client
+        working-directory: ./client
+        run: npm audit --audit-level=high || echo "Vulnerabilities found, but allowing build to pass for now"
