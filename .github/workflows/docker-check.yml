@@ -1,8 +1,11 @@
 name: Docker Build Validation
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   docker-dry-run:
