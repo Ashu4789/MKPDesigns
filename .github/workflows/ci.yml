@@ -1,0 +1,37 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Client Dependencies
+        working-directory: ./client
+        run: npm ci || npm install
+
+      - name: Build Client
+        working-directory: ./client
+        run: npm run build
+
+      - name: Install Server Dependencies
+        working-directory: ./server
+        run: npm ci || npm install
+
+      # Add testing steps here if applicable
+      # - name: Run Tests
+      #   run: npm test
