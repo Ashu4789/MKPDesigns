@@ -1,0 +1,62 @@
+=========================================
+CA-2 DevOps Project Report Content
+=========================================
+
+1. PROJECT SYNOPSIS (10 Marks)
+-----------------------------------------
+Project Title: Automated CI/CD Pipeline for MKPDesigns (MERN Stack)
+Tools Used: Docker, Jenkins, GitHub Actions
+Architecture/Workflow:
+- Code Push -> GitHub Repository
+- Pull Request -> GitHub Actions (CI: Linting & Testing)
+- Merge to Main -> Webhook triggers Jenkins
+- Jenkins (CD) -> Build Docker Images -> Push to DockerHub -> Deploy Containers
+Expected Results: Automated, zero-downtime deployments with consistent Dockerized environments.
+
+
+2. GITHUB REPOSITORY MAINTENANCE (25 Marks)
+-----------------------------------------
+[Screenshot Slot: Repository Structure showing client/, server/, etc.]
+[Screenshot Slot: Git Branching (e.g., feature branches and PRs)]
+[Screenshot Slot: Commit History demonstrating meaningul commits]
+[Screenshot Slot: README.md rendering properly]
+
+Execution Details (Phase 1):
+- Created a dedicated feature branch (`feature/setup-ci-cd`) to adopt professional branching strategies.
+- Updated the repository's `README.md` to document the CI/CD pipeline architecture clearly.
+- Committed the changes with conventional commit messages (e.g., `docs: update README with CI/CD architecture`).
+- Merged the feature branch into `main` to demonstrate proper workflow.
+
+
+3. IMPLEMENTATION (35 Marks)
+-----------------------------------------
+A. Dockerization
+[Screenshot Slot: Client Dockerfile]
+[Screenshot Slot: Server Dockerfile]
+[Screenshot Slot: docker-compose.yml]
+[Screenshot Slot: Terminal output of `docker-compose up` or `docker ps` showing running containers]
+
+B. GitHub Actions (Continuous Integration)
+[Screenshot Slot: GitHub Actions workflow file ci.yml]
+[Screenshot Slot: GitHub Actions interface showing a successful build/test run (Green ticks)]
+
+C. Jenkins (Continuous Deployment)
+[Screenshot Slot: Jenkins Pipeline configuration / Jenkinsfile]
+[Screenshot Slot: Jenkins Blue Ocean / Stage view showing successful deployment]
+[Screenshot Slot: GitHub Webhook configuration in repository settings]
+
+
+4. PROJECT FILE / DOCUMENTATION (10 Marks)
+-----------------------------------------
+Introduction & Objectives:
+To eliminate manual deployment processes and enforce code quality checks by building an automated CI/CD pipeline.
+
+Observations & Conclusion:
+The integration of GitHub Actions and Jenkins successfully created a robust pipeline. Actions handled rapid CI feedback for developers, while Jenkins reliably managed the CD process by building and deploying Docker containers.
+
+
+5. VIVA PREPARATION (20 Marks)
+-----------------------------------------
+- Be ready to demonstrate a live code change pushing through the pipeline.
+- Be able to explain the difference between CI and CD.
+- Understand basic Docker commands (build, run, ps, logs).

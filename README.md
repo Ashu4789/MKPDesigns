@@ -134,6 +134,19 @@ MKPDesigns/
     └── package.json        # Backend dependencies
 ```
 
+## DevOps & CI/CD Architecture
+
+This project utilizes a fully automated CI/CD pipeline to ensure code quality and seamless deployments.
+
+- **Version Control**: GitHub (Feature branching, Pull Requests)
+- **Continuous Integration (CI)**: GitHub Actions
+  - Automatically triggered on Pull Requests to `main`.
+  - Installs dependencies and runs necessary tests/linters.
+- **Continuous Deployment (CD)**: Jenkins & Docker
+  - Triggered via GitHub Webhooks upon merging to `main`.
+  - **Jenkins** fetches the latest code and uses **Docker** to build new images for both the client and server.
+  - The containers are subsequently deployed ensuring a consistent and reliable environment.
+
 ## Installation
 
 1.  **Clone the repository**
