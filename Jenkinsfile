@@ -28,6 +28,9 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying containers...'
+                    // Stop and remove existing containers to avoid namespace collisions
+                    sh "docker-compose down || true"
+                    sh "docker rm -f mkpdesigns_server mkpdesigns_client || true"
                     sh "docker-compose up -d"
                 }
             }
